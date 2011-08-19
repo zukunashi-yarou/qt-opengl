@@ -1,8 +1,16 @@
 #include "glwidget.h"
+#include <QDebug>
+#include <QtGui/QMessageBox>
 
 GLWidget::GLWidget(QWidget *parent) :
     QGLWidget(parent)
 {
+    if ((QGLFormat::openGLVersionFlags() & QGLFormat::OpenGL_Version_1_1) == 0) {
+        QMessageBox::critical(0,
+            "OpenGL features missing",
+            "OpenGL version 1.1 or higher is required.");
+        close();
+    }
 }
 
 void GLWidget::initializeGL()
