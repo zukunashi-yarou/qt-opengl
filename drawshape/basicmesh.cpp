@@ -326,7 +326,7 @@ Mesh* createCapsule( float radius, float length, unsigned int numSlices )
 Mesh* createCylinder( float radius, float length, unsigned int numSlices )
 {
   unsigned int numVertices = 1 + (numSlices+1)*4 + 1;
-  unsigned int numIndices = (numSlices + numSlices*4 + numSlices) * 3;
+  unsigned int numIndices = (numSlices + numSlices*2 + numSlices) * 3;
   float angleStep = (2.0f * M_PI) / ((float) numSlices);
   float l = length * 0.5;
 
@@ -475,7 +475,7 @@ Mesh* createCylinder( float radius, float length, unsigned int numSlices )
 Mesh* createCone( float radius, float length, unsigned int numSlices )
 {
   unsigned int numVertices = 1 + (numSlices+1)*2 + 1;
-  unsigned int numIndices = (numSlices + numSlices*2 + numSlices) * 3;
+  unsigned int numIndices = (numSlices*2) * 3;
   float angleStep = (2.0f * M_PI) / ((float) numSlices);
   float l = length * 0.5;
 

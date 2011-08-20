@@ -10,6 +10,7 @@ static Mesh* sphere;
 static Mesh* cube;
 static Mesh* cylinder;
 static Mesh* capsule;
+static Mesh* cone;
 
 GLWidget::GLWidget(QWidget *parent) :
     QGLWidget(parent)
@@ -26,6 +27,7 @@ GLWidget::GLWidget(QWidget *parent) :
     cube = createCube(0.5);
     cylinder = createCylinder(0.5, 0.5, 10);
     capsule = createCapsule(0.5, 0.5, 10);
+    cone = createCone(0.5, 0.8, 10);
 }
 
 void GLWidget::initializeGL()
@@ -174,6 +176,27 @@ void GLWidget::paintGL()
         glTranslatef(3.0, 0.0, 0.0);
 
         Mesh *mesh = capsule;
+        for (unsigned i=0; i<mesh->numIndices; i+=3) {
+            glBegin(GL_TRIANGLES);
+            for (int j=0; j<3; j++) {
+                VertexData &v = mesh->vertices[mesh->indices[i+j]];
+                glNormal3f(v.normal.x(), v.normal.y(), v.normal.z());
+                glVertex3f(v.position.x(), v.position.y(), v.position.z());
+            }
+            glEnd();
+        }
+    }
+    glPopMatrix();
+
+    // draw cone
+    glPushMatrix();
+    {
+        GLfloat color[] = { 1.0, 1.0, 0.0, 1.0 };
+        glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
+
+        glTranslatef(3.0, 0.0, 2.0);
+
+        Mesh *mesh = cone;
         for (unsigned i=0; i<mesh->numIndices; i+=3) {
             glBegin(GL_TRIANGLES);
             for (int j=0; j<3; j++) {
