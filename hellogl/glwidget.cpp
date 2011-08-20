@@ -1,5 +1,4 @@
 #include "glwidget.h"
-#include <QDebug>
 #include <QtGui/QMessageBox>
 
 GLWidget::GLWidget(QWidget *parent) :
