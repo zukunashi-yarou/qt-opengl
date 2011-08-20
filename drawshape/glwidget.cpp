@@ -31,6 +31,7 @@ GLWidget::GLWidget(QWidget *parent) :
 void GLWidget::initializeGL()
 {
     glClearColor(0.3, 0.3, 0.3, 1.0);
+    glClearDepth(1.0);
 
     glEnable(GL_DEPTH_TEST);
 
