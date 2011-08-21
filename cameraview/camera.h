@@ -19,6 +19,7 @@ public:
     const qreal* matrixData();
 
     void renderSubAxis(int w, int h);
+    void render();
 
 private:
     bool      m_motion_on;       // ƒ‚[ƒVƒ‡ƒ“On/Off

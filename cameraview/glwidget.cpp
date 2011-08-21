@@ -272,9 +272,8 @@ void GLWidget::paintGL()
     }
     glPopMatrix();
 
-    glPushMatrix();
-    //camera->renderSubAxis(100, 100);
+    camera->render();
+
     camera->renderSubAxis(0, 0);
-    glPopMatrix();
 }
 

@@ -13,7 +13,7 @@ static const float size = 2.0;
 Camera::Camera(QGLWidget *parent):
     m_motion_on(false),
     m_eye(QVector3D(7,8,9)),
-    m_ctr(QVector3D(0,0,0)),
+    m_ctr(QVector3D(0,0.5,0)),
     m_axis(QVector3D(0,1,0)),
     widget(parent)
 {
@@ -79,11 +79,20 @@ void Camera::motion(QVector2D move_pos)
         m.rotate(angle2,axis);
         m_eye = m * vec + m_ctr;
     }
-    else if (m_motion_mode == 4) {
+    else if (m_motion_mode == 2) {
         QVector3D vec = m_eye-m_ctr;
         QMatrix4x4 m;
         m.scale(1.0 + qreal(delta.y())*0.005);
         m_eye = m * vec + m_ctr;
+    }
+    else if (m_motion_mode == 4) {
+        QVector3D vec = m_ctr-m_eye;
+        QMatrix4x4 m;
+        qreal angle1 = qreal(delta.x())*0.3;
+        m.rotate(angle1,m_axis);
+        qreal scale = 1.0+qreal(delta.y())*0.005;
+        vec = QVector3D(vec.x()*scale, vec.y(), vec.z()*scale);
+        m_ctr = m * vec + m_eye;
     }
     m_motion_init_pos = move_pos;
 
@@ -100,12 +109,13 @@ const qreal* Camera::matrixData()
 
 void Camera::renderSubAxis(int w, int h)
 {
+    if (!m_motion_on) return;
+
     GLint viewport[4];
 
     glGetIntegerv(GL_VIEWPORT, viewport);
 
-    //glViewport(w-100, h-100, 100, 100);
-    glViewport(0, 0, 100, 100);
+    glViewport(0+w, 0+h, 100, 100);
 
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
@@ -184,4 +194,57 @@ void Camera::renderSubAxis(int w, int h)
     glMatrixMode(GL_MODELVIEW);
 
     glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
+}
+
+void Camera::render()
+{
+    if (!m_motion_on) return;
+
+    const float offset = 0.5;
+    const float length = 0.5;
+
+    QVector3D vec = m_eye - m_ctr;
+    qreal scale = 0.1*vec.length();
+
+    glDisable(GL_LIGHTING);
+    glPushMatrix();
+
+    //position
+    glTranslated(m_ctr.x(),m_ctr.y(),m_ctr.z());
+    glScaled(scale,scale,scale);
+
+    glColor3f(1.0,1.0,1.0); // white
+
+    glBegin(GL_LINES);
+    glVertex3f(offset, 0.0, 0.0);
+    glVertex3f(offset+length, 0.0, 0.0);
+    glEnd();
+
+    glBegin(GL_LINES);
+    glVertex3f(-offset, 0.0, 0.0);
+    glVertex3f(-(offset+length), 0.0, 0.0);
+    glEnd();
+
+    glBegin(GL_LINES);
+    glVertex3f(0.0, offset, 0.0);
+    glVertex3f(0.0, offset+length, 0.0);
+    glEnd();
+
+    glBegin(GL_LINES);
+    glVertex3f(0.0, -offset, 0.0);
+    glVertex3f(0.0, -(offset+length), 0.0);
+    glEnd();
+
+    glBegin(GL_LINES);
+    glVertex3f(0.0, 0.0, offset);
+    glVertex3f(0.0, 0.0, offset+length);
+    glEnd();
+
+    glBegin(GL_LINES);
+    glVertex3f(0.0, 0.0, -offset);
+    glVertex3f(0.0, 0.0, -(offset+length));
+    glEnd();
+
+    glPopMatrix();
+    glEnable(GL_LIGHTING);
 }
