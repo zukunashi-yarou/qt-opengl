@@ -23,11 +23,13 @@ public:
 
 private:
     bool      m_motion_on;       // モーションOn/Off
+    int       m_motion_type;     // カメラ移動の種類
     int       m_motion_mode;     // カメラ移動モード
     QVector2D m_motion_init_pos; // 初期位置
 
     QVector3D m_eye;
     QVector3D m_ctr;
+    QVector3D m_hpr;
     QVector3D m_axis;
 
     QMatrix4x4 m_matrix;
