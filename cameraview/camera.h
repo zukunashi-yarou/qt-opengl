@@ -18,6 +18,8 @@ public:
     void motion(QVector2D mpos);
     const qreal* matrixData();
 
+    void setType(QString type);
+
     void renderSubAxis(int w, int h);
     void render();
 

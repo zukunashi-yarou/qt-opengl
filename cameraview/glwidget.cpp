@@ -65,6 +65,17 @@ void GLWidget::timerEvent(QTimerEvent *e)
     updateGL();
 }
 
+
+void GLWidget::viewSelect(bool odeOn)
+{
+    if (odeOn) {
+        camera->setType("ode");
+    }
+    else {
+        camera->setType("default");
+    }
+}
+
 void GLWidget::initializeGL()
 {
     qDebug() << "OpenGL Ver. : " << (const char*)(glGetString(GL_VERSION));

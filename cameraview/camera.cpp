@@ -12,7 +12,7 @@ static const float size = 2.0;
 
 Camera::Camera(QGLWidget *parent):
     m_motion_on(false),
-    m_motion_type(1),
+    m_motion_type(0),
     m_motion_mode(0),
     m_eye(QVector3D(7,8,9)),
     m_ctr(QVector3D(0,0.5,0)),
@@ -151,6 +151,17 @@ const qreal* Camera::matrixData()
 //        m_matrix.translate(m_eye.x(), -m_eye.y(), m_eye.z());
 //    }
     return m_matrix.data();
+}
+
+
+void Camera::setType(QString type)
+{
+    if (type == "ode") {
+        m_motion_type = 1;
+    }
+    else { // default
+        m_motion_type = 0;
+    }
 }
 
 void Camera::renderSubAxis(int w, int h)

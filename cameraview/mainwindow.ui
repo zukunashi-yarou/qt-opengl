@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>492</width>
+    <height>382</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,13 +19,20 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>400</width>
+     <width>492</width>
      <height>24</height>
     </rect>
    </property>
    <property name="acceptDrops">
     <bool>false</bool>
    </property>
+   <widget class="QMenu" name="menuVie">
+    <property name="title">
+     <string>Camera</string>
+    </property>
+    <addaction name="actionODE"/>
+   </widget>
+   <addaction name="menuVie"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -44,6 +51,14 @@
     <string>On</string>
    </property>
   </action>
+  <action name="actionODE">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>ODE</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -52,8 +67,28 @@
    <extends>QWidget</extends>
    <header location="global">glwidget.h</header>
    <container>1</container>
+   <slots>
+    <slot>viewSelect(bool)</slot>
+   </slots>
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>actionODE</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>centralWidget</receiver>
+   <slot>viewSelect(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>199</x>
+     <y>156</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

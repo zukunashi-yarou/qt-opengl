@@ -18,6 +18,7 @@ protected:
     void timerEvent(QTimerEvent *e);
 
 private slots:
+    void viewSelect(bool odeOn);
 
 protected:
     void initializeGL();
