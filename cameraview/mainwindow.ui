@@ -30,6 +30,7 @@
     <property name="title">
      <string>Camera</string>
     </property>
+    <addaction name="actionDefault"/>
     <addaction name="actionODE"/>
    </widget>
    <addaction name="menuVie"/>
@@ -57,6 +58,17 @@
    </property>
    <property name="text">
     <string>ODE</string>
+   </property>
+  </action>
+  <action name="actionDefault">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>default</string>
    </property>
   </action>
  </widget>
@@ -87,6 +99,38 @@
     <hint type="destinationlabel">
      <x>199</x>
      <y>156</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionDefault</sender>
+   <signal>triggered()</signal>
+   <receiver>actionODE</receiver>
+   <slot>toggle()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionODE</sender>
+   <signal>triggered()</signal>
+   <receiver>actionDefault</receiver>
+   <slot>toggle()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
     </hint>
    </hints>
   </connection>
