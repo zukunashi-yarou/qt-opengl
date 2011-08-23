@@ -29,7 +29,6 @@ private:
 
     QVector3D m_eye;
     QVector3D m_ctr;
-    QVector3D m_hpr;
     QVector3D m_axis;
 
     QMatrix4x4 m_matrix;

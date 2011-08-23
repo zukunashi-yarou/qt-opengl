@@ -16,7 +16,6 @@ Camera::Camera(QGLWidget *parent):
     m_motion_mode(0),
     m_eye(QVector3D(7,8,9)),
     m_ctr(QVector3D(0,0.5,0)),
-    m_hpr(QVector3D(90.0,-10,0)),
     m_axis(QVector3D(0,1,0)),
     widget(parent)
 {
@@ -50,10 +49,10 @@ void Camera::startMotion(QString mode, QVector2D pos)
     if (mode == QString("Left")) {
         m_motion_mode = 1;
     }
-    else if (mode == QString("Right")){
+    else if (mode == QString("Middle")) {
         m_motion_mode = 2;
     }
-    else if (mode == QString("Middle")) {
+    else if (mode == QString("Right")){
         m_motion_mode = 4;
     }
     else {
@@ -85,6 +84,12 @@ void Camera::motion(QVector2D move_pos)
             m_eye = m * vec + m_ctr;
         }
         else if (m_motion_mode == 2) {
+            QVector3D vec = m_eye-m_ctr;
+            QMatrix4x4 m;
+            m.scale(1.0 - qreal(delta.y())*0.005);
+            m_eye = m * vec + m_ctr;
+        }
+        else if (m_motion_mode == 4) {
             QVector3D vec = m_ctr-m_eye;
             QMatrix4x4 m;
             qreal angle1 = qreal(delta.x())*0.3;
@@ -93,12 +98,6 @@ void Camera::motion(QVector2D move_pos)
             vec = QVector3D(vec.x()*scale, vec.y(), vec.z()*scale);
             m_ctr = m * vec + m_eye;
         }
-        else if (m_motion_mode == 4) {
-            QVector3D vec = m_eye-m_ctr;
-            QMatrix4x4 m;
-            m.scale(1.0 - qreal(delta.y())*0.005);
-            m_eye = m * vec + m_ctr;
-        }
         m_motion_init_pos = move_pos;
 
         qDebug() << "pos:" << m_eye << ", ctr:" << m_ctr;
@@ -106,27 +105,32 @@ void Camera::motion(QVector2D move_pos)
     else if (m_motion_type == 1) { // ODE view mode
         QVector2D delta = move_pos - m_motion_init_pos;
 
-        float side = 0.01f * float(delta.x());
-        float fwd = (m_motion_mode==4) ? (0.01f*float(delta.y())) : 0.0f;
-        float s = (float) sin(m_hpr.x()*(M_PI/180.0));
-        float c = (float) cos(m_hpr.x()*(M_PI/180.0));
         if (m_motion_mode==1) {
-            m_hpr.setX(m_hpr.x() + float(delta.x()) * 0.5f);
-            m_hpr.setY(m_hpr.y() + float(delta.y()) * 0.5f);
+            QVector3D vec = m_ctr-m_eye;
+            QVector3D vec0 = vec.normalized();
+            QVector3D vec1 = QVector3D::crossProduct(vec0, m_axis);
+            QVector3D vec2 = QVector3D::crossProduct(vec1, vec0);
+//            QVector3D vec3 = QVector3D::crossProduct(vec1, vec2);
+            QMatrix4x4 m;
+            m.rotate(float(delta.x())*0.3f, vec2);
+            m.rotate(float(delta.y())*0.3f, vec1);
+            m_ctr = m * vec + m_eye;
         }
         else {
-            m_eye.setZ(m_eye.z() -s*side + c*fwd);
-            m_eye.setX(m_eye.x() +c*side + s*fwd);
-            if (m_motion_mode==2 || m_motion_mode==5) {
-                m_eye.setY(m_eye.y() + 0.01f * float(delta.y()));
+            QVector3D vec = m_ctr-m_eye;
+            QVector3D vec0 = vec.normalized();
+            QVector3D vec1 = QVector3D::crossProduct(m_axis, vec0);
+            QVector3D vec2 = QVector3D::crossProduct(vec1, m_axis);
+            QVector3D vec3 = QVector3D::crossProduct(vec2, vec1);
+            if (m_motion_mode == 2) {
+                m_eye += 0.03*(vec1*delta.x() + vec3*delta.y());
+                m_ctr += 0.03*(vec1*delta.x() + vec3*delta.y());
+            }
+            else {
+                m_eye += 0.03*(vec1*delta.x() + vec2*delta.y());
+                m_ctr += 0.03*(vec1*delta.x() + vec2*delta.y());
             }
         }
-        if(m_hpr.x() > 180.0) m_hpr.setX(m_hpr.x() - 360.0);
-        if(m_hpr.x() <-180.0) m_hpr.setX(m_hpr.x() + 360.0);
-        if(m_hpr.y() > 180.0) m_hpr.setY(m_hpr.y() - 360.0);
-        if(m_hpr.y() <-180.0) m_hpr.setY(m_hpr.y() + 360.0);
-        if(m_hpr.z() > 180.0) m_hpr.setZ(m_hpr.z() - 360.0);
-        if(m_hpr.z() <-180.0) m_hpr.setZ(m_hpr.z() + 360.0);
 
         m_motion_init_pos = move_pos;
     }
@@ -136,15 +140,16 @@ void Camera::motion(QVector2D move_pos)
 const qreal* Camera::matrixData()
 {
     m_matrix.setToIdentity();
-    if (m_motion_type == 0) {
-        m_matrix.lookAt(m_eye, m_ctr, m_axis);
-    }
-    else if (m_motion_type == 1) {
-        m_matrix.rotate(m_hpr.y(), QVector3D(-1,0,0));
-        m_matrix.rotate(m_hpr.x(), QVector3D(0,-1,0));
-        m_matrix.rotate(m_hpr.z(), QVector3D(0,0,-1));
-        m_matrix.translate(m_eye.x(), -m_eye.y(), m_eye.z());
-    }
+    m_matrix.lookAt(m_eye, m_ctr, m_axis);
+//    if (m_motion_type == 0) {
+//        m_matrix.lookAt(m_eye, m_ctr, m_axis);
+//    }
+//    else if (m_motion_type == 1) {
+//        m_matrix.rotate(m_hpr.y(), QVector3D(-1,0,0));
+//        m_matrix.rotate(m_hpr.x(), QVector3D(0,-1,0));
+//        m_matrix.rotate(m_hpr.z(), QVector3D(0,0,-1));
+//        m_matrix.translate(m_eye.x(), -m_eye.y(), m_eye.z());
+//    }
     return m_matrix.data();
 }
 
@@ -241,7 +246,7 @@ void Camera::render()
 {
     if (!m_motion_on) return;
 
-    if (m_motion_type==0) {
+    /*if (m_motion_type==0)*/ {
         const float offset = 0.5;
         const float length = 0.5;
 
