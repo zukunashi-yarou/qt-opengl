@@ -15,13 +15,25 @@ SOURCES += main.cpp\
     camera.cpp \
     basicmesh.cpp \
     glwidget.cpp \
-    drawstuff.cpp
+    drawstuff.cpp \
+    objmesh.cpp
 
 HEADERS  += mainwindow.h \
     mesh.h \
     camera.h \
     basicmesh.h \
     glwidget.h \
-    drawstuff.h
+    drawstuff.h \
+    objmesh.h
 
 FORMS    += mainwindow.ui
+
+OTHER_FILES +=
+
+RESOURCES += \
+    mesh.qrc
+
+
+
+
+

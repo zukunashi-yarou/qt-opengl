@@ -1,7 +1,8 @@
 #include "glwidget.h"
 #include <QDebug>
 #include <QtGui/QMessageBox>
-
+#include "objmesh.h"
+#include <QFile>
 
 GLWidget::GLWidget(QWidget *parent) :
     Drawstuff(parent),
@@ -21,6 +22,12 @@ void GLWidget::initializeGL()
 {
     Drawstuff::initializeGL();
     timer->start(16, this);
+
+
+    ObjMesh mesh;
+    QFile file(":/mesh/cube.obj");
+//    QFile file(":/mesh/tree.obj");
+    mesh.load(file);
 }
 
 void GLWidget::resizeGL( int w, int h )
